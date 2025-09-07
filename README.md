@@ -6,7 +6,7 @@ How to Run the Project
 
 bash
 
-git clone <your-repo>
+git clone https://github.com/alissonthx/JobFit-Analyzer.git
 cd jobfit-analyzer
 npm install
 
