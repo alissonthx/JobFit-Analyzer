@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { analyzeResume } from '../services/api';
+import { apiService } from '../services/api';
 
 const ResumeAnalyzer: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
@@ -13,7 +13,7 @@ const ResumeAnalyzer: React.FC = () => {
 
     setLoading(true);
     try {
-      const result = await analyzeResume(resumeFile, jobDescription);
+      const result = await apiService.analyzeResume(resumeFile, jobDescription);
       setAnalysis(result);
     } catch (error) {
       console.error('Error:', error);
