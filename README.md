@@ -2,7 +2,7 @@
 
 How to Run the Project
 
-    Clone and setup:
+Clone and setup:
 
 ```bash
 git clone https://github.com/alissonthx/JobFit-Analyzer.git
@@ -16,15 +16,22 @@ cd jobfit-analyzer
 npm install
 ```
 
-    Set up environment variables
+Set up environment variables on .env file, example:
 
-    Start with Docker:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+PORT=3001
+REDIS_URL=redis://localhost:6379
+DATABASE_URL=postgresql://postgres:password@localhost:5432/jobfit
+```
+
+Start with Docker:
 
 ```bash
 docker-compose up --build
 ```
 
-    Or run locally:
+Or run locally:
 
 # Backend
 
@@ -38,8 +45,8 @@ cd backend && npm run dev
 cd frontend && npm run dev
 ```
 
-🛠️ Tech Stack
-Frontend
+# 🛠️ Tech Stack
+## Frontend
 
 - React with TypeScript
 
@@ -49,7 +56,7 @@ Frontend
 
 - Lucide React for icons
 
-Backend
+## Backend
 
 - Node.js with TypeScript
 
@@ -63,7 +70,7 @@ Backend
 
 - Jest for testing
 
-Infrastructure
+## Infrastructure
 
 - Docker & Docker Compose
 
@@ -71,9 +78,9 @@ Infrastructure
 
 - PostgreSQL database
 
-📋 Prerequisites
+# 📋 Prerequisites
 
-Before running this project, make sure you have:
+## Before running this project, make sure you have:
 
 - Node.js (v18 or higher)
 
