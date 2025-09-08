@@ -83,7 +83,7 @@ const ResumeAnalyzer: React.FC = () => {
                 <button
                   type="submit"
                   disabled={!isFormValid || loading}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 transform"
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">
@@ -98,7 +98,7 @@ const ResumeAnalyzer: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-6 py-4 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                  className="px-6 py-4 border border-gray-300 rounded-xl text-blue-500 hover:text-blue-600 transition-colors duration-200 font-medium"
                 >
                   Reset
                 </button>
