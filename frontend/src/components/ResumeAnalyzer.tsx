@@ -5,6 +5,7 @@ import type { AnalysisResult } from '../types/api';
 import AnalysisResults from './AnalysisResults';
 import FileUpload from './FileUpload';
 import JobDescriptionInput from './JobDescriptionInput';
+import { Transition } from '@headlessui/react';
 
 const ResumeAnalyzer: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
@@ -51,56 +52,78 @@ const ResumeAnalyzer: React.FC = () => {
           </p>
         </div>
 
-        {!analysis ? (
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <FileUpload 
-              resumeFile={resumeFile}
-              onFileChange={setResumeFile}
-            />
-            
-            <JobDescriptionInput
-              value={jobDescription}
-              onChange={setJobDescription}
-            />
-
-            {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                <p className="text-red-700 font-medium">Error: {error.message}</p>
-              </div>
-            )}
-
-            <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={!isFormValid || loading}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 transform"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                    Analyzing...
-                  </span>
-                ) : (
-                  'Analyze Resume Fit'
-                )}
-              </button>
+        <Transition
+          show={!analysis}
+          enter="transition-opacity duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          {!analysis ? (
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <FileUpload 
+                resumeFile={resumeFile}
+                onFileChange={setResumeFile}
+              />
               
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-6 py-4 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
-              >
-                Reset
-              </button>
-            </div>
-          </form>
-        ) : (
-          <AnalysisResults 
-            analysis={analysis}
-            jobDescription={jobDescription}
-            onReset={handleReset}
-          />
-        )}
+              <JobDescriptionInput
+                value={jobDescription}
+                onChange={setJobDescription}
+              />
+
+              {error && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-red-700 font-medium">Error: {error.message}</p>
+                </div>
+              )}
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  disabled={!isFormValid || loading}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 transform"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                      Analyzing...
+                    </span>
+                  ) : (
+                    'Analyze Resume Fit'
+                  )}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-6 py-4 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium"
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+          ) : null}
+        </Transition>
+
+        <Transition
+          show={!!analysis}
+          enter="transition-opacity duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          {analysis && (
+            <AnalysisResults 
+              analysis={analysis}
+              jobDescription={jobDescription}
+              onReset={handleReset}
+            />
+          )}
+        </Transition>
       </div>
     </div>
   );

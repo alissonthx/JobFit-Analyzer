@@ -1,5 +1,6 @@
-import React from 'react';
-import { Upload, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { Upload, FileText, CircleQuestionMark } from 'lucide-react';
+import Modal from './ui/Modal';
 
 interface FileUploadProps {
   resumeFile: File | null;
@@ -7,6 +8,8 @@ interface FileUploadProps {
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     onFileChange(file);
@@ -27,11 +30,28 @@ const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => 
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      document.getElementById('resume-upload')?.click();
+    }
+  };
+
   return (
     <div>
-      <label className="block text-lg font-semibold text-gray-700 mb-4">
-        📄 Upload Your Resume (PDF)
-      </label>
+      <div className="flex items-center justify-between mb-4">
+        <label className="block text-lg font-semibold text-gray-700">
+          📄 Upload Your Resume (PDF)
+        </label>
+        <button
+          type="button"
+          onClick={() => setIsHelpOpen(true)}
+          className="text-blue-500 hover:text-blue-700 transition-colors"
+          aria-label="Upload help"
+        >
+          <CircleQuestionMark className="h-5 w-5" />
+        </button>
+      </div>
       
       <div
         className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
@@ -42,6 +62,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => 
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={() => document.getElementById('resume-upload')?.click()}
+        role="button"
+        tabIndex={0}
+        onKeyPress={handleKeyPress}
       >
         <input
           id="resume-upload"
@@ -81,6 +104,27 @@ const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => 
           </div>
         )}
       </div>
+
+      <Modal
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+        title="Upload Help"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            For the best analysis results, ensure your resume:
+          </p>
+          <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <li>Is in PDF format</li>
+            <li>Clearly lists your skills and experience</li>
+            <li>Includes relevant keywords from your target job descriptions</li>
+            <li>Is recent and up-to-date</li>
+          </ul>
+          <p className="text-sm text-gray-500">
+            The AI will scan your resume for keywords matching the job description you provide.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 };

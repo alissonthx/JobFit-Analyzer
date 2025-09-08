@@ -1,6 +1,7 @@
-import React from 'react';
-import type { AnalysisResult } from '../types/api';
+import React, { useState } from 'react';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { CheckCircle, XCircle, Lightbulb, TrendingUp, AlertCircle, Download, RotateCcw } from 'lucide-react';
+import type { AnalysisResult } from '../types/api';
 
 interface AnalysisResultsProps {
   analysis: AnalysisResult;
@@ -13,6 +14,8 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
   jobDescription,
   onReset 
 }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
@@ -52,6 +55,13 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const tabClasses = (selected: boolean) =>
+    `w-full py-4 text-sm font-medium rounded-lg transition-all duration-200 ${
+      selected
+        ? 'bg-blue-600 text-white shadow-lg'
+        : 'bg-white text-gray-600 hover:bg-gray-100'
+    }`;
+
   return (
     <div className="space-y-8 fade-in">
       <div className="text-center">
@@ -78,83 +88,99 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Matching Skills */}
-        <div className="bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-sm">
-          <div className="flex items-center mb-4">
-            <CheckCircle className="h-7 w-7 text-green-600 mr-3" />
-            <h4 className="font-semibold text-green-800 text-xl">✅ Matching Skills</h4>
-          </div>
-          <ul className="space-y-3">
-            {analysis.matches.map((match, index) => (
-              <li key={index} className="text-green-700 bg-white py-3 px-4 rounded-xl text-base border border-green-100">
-                {match}
-              </li>
-            ))}
-          </ul>
-        </div>
+      {/* Tabbed Interface */}
+      <TabGroup selectedIndex={selectedTab} onChange={setSelectedTab}>
+        <TabList className="flex space-x-2 rounded-xl bg-gray-100 p-2">
+          <Tab className={tabClasses(selectedTab === 0)}>Matches & Gaps</Tab>
+          <Tab className={tabClasses(selectedTab === 1)}>Suggestions</Tab>
+          <Tab className={tabClasses(selectedTab === 2)}>Strengths & Weaknesses</Tab>
+        </TabList>
+        
+        <TabPanels className="mt-6">
+          {/* Panel 1: Matches & Gaps */}
+          <TabPanel>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-sm">
+                <div className="flex items-center mb-4">
+                  <CheckCircle className="h-7 w-7 text-green-600 mr-3" />
+                  <h4 className="font-semibold text-green-800 text-xl">✅ Matching Skills</h4>
+                </div>
+                <ul className="space-y-3">
+                  {analysis.matches.map((match, index) => (
+                    <li key={index} className="text-green-700 bg-white py-3 px-4 rounded-xl text-base border border-green-100">
+                      {match}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-        {/* Missing Keywords */}
-        <div className="bg-red-50 p-6 rounded-2xl border-2 border-red-200 shadow-sm">
-          <div className="flex items-center mb-4">
-            <XCircle className="h-7 w-7 text-red-600 mr-3" />
-            <h4 className="font-semibold text-red-800 text-xl">❌ Missing Keywords</h4>
-          </div>
-          <ul className="space-y-3">
-            {analysis.missingKeywords.map((keyword, index) => (
-              <li key={index} className="text-red-700 bg-white py-3 px-4 rounded-xl text-base border border-red-100">
-                {keyword}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+              <div className="bg-red-50 p-6 rounded-2xl border-2 border-red-200 shadow-sm">
+                <div className="flex items-center mb-4">
+                  <XCircle className="h-7 w-7 text-red-600 mr-3" />
+                  <h4 className="font-semibold text-red-800 text-xl">❌ Missing Keywords</h4>
+                </div>
+                <ul className="space-y-3">
+                  {analysis.missingKeywords.map((keyword, index) => (
+                    <li key={index} className="text-red-700 bg-white py-3 px-4 rounded-xl text-base border border-red-100">
+                      {keyword}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </TabPanel>
 
-      {/* Suggestions */}
-      <div className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-sm">
-        <div className="flex items-center mb-4">
-          <Lightbulb className="h-7 w-7 text-blue-600 mr-3" />
-          <h4 className="font-semibold text-blue-800 text-xl">💡 Improvement Suggestions</h4>
-        </div>
-        <ul className="space-y-4">
-          {analysis.suggestions.map((suggestion, index) => (
-            <li key={index} className="text-blue-700 bg-white py-4 px-5 rounded-xl text-base border border-blue-100">
-              {suggestion}
-            </li>
-          ))}
-        </ul>
-      </div>
+          {/* Panel 2: Suggestions */}
+          <TabPanel>
+            <div className="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-sm">
+              <div className="flex items-center mb-4">
+                <Lightbulb className="h-7 w-7 text-blue-600 mr-3" />
+                <h4 className="font-semibold text-blue-800 text-xl">💡 Improvement Suggestions</h4>
+              </div>
+              <ul className="space-y-4">
+                {analysis.suggestions.map((suggestion, index) => (
+                  <li key={index} className="text-blue-700 bg-white py-4 px-5 rounded-xl text-base border border-blue-100">
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </TabPanel>
 
-      {/* Strengths & Weaknesses */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
-          <div className="flex items-center mb-4">
-            <TrendingUp className="h-7 w-7 text-yellow-600 mr-3" />
-            <h4 className="font-semibold text-yellow-800 text-xl">🌟 Strengths</h4>
-          </div>
-          <ul className="space-y-3">
-            {analysis.strengths.map((strength, index) => (
-              <li key={index} className="text-yellow-700 bg-white py-3 px-4 rounded-xl text-base border border-yellow-100">
-                {strength}
-              </li>
-            ))}
-          </ul>
-        </div>
+          {/* Panel 3: Strengths & Weaknesses */}
+          <TabPanel>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 shadow-sm">
+                <div className="flex items-center mb-4">
+                  <TrendingUp className="h-7 w-7 text-yellow-600 mr-3" />
+                  <h4 className="font-semibold text-yellow-800 text-xl">🌟 Strengths</h4>
+                </div>
+                <ul className="space-y-3">
+                  {analysis.strengths.map((strength, index) => (
+                    <li key={index} className="text-yellow-700 bg-white py-3 px-4 rounded-xl text-base border border-yellow-100">
+                      {strength}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-        <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-200 shadow-sm">
-          <div className="flex items-center mb-4">
-            <AlertCircle className="h-7 w-7 text-orange-600 mr-3" />
-            <h4 className="font-semibold text-orange-800 text-xl">⚠️ Areas to Improve</h4>
-          </div>
-          <ul className="space-y-3">
-            {analysis.weaknesses.map((weakness, index) => (
-              <li key={index} className="text-orange-700 bg-white py-3 px-4 rounded-xl text-base border border-orange-100">
-                {weakness}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+              <div className="bg-orange-50 p-6 rounded-2xl border-2 border-orange-200 shadow-sm">
+                <div className="flex items-center mb-4">
+                  <AlertCircle className="h-7 w-7 text-orange-600 mr-3" />
+                  <h4 className="font-semibold text-orange-800 text-xl">⚠️ Areas to Improve</h4>
+                </div>
+                <ul className="space-y-3">
+                  {analysis.weaknesses.map((weakness, index) => (
+                    <li key={index} className="text-orange-700 bg-white py-3 px-4 rounded-xl text-base border border-orange-100">
+                      {weakness}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </TabPanel>
+        </TabPanels>
+      </TabGroup>
 
       {/* Action Buttons */}
       <div className="flex gap-6 pt-8 border-t border-gray-200">
