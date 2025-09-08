@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, FileText } from 'lucide-react';
 
 interface FileUploadProps {
   resumeFile: File | null;
@@ -29,15 +29,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => 
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Upload Your Resume (PDF)
+      <label className="block text-lg font-semibold text-gray-700 mb-4">
+        📄 Upload Your Resume (PDF)
       </label>
       
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+        className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${
           resumeFile 
-            ? 'border-green-500 bg-green-50' 
-            : 'border-gray-300 hover:border-blue-400 bg-gray-50'
+            ? 'border-green-500 bg-green-50 ring-4 ring-green-100 shadow-inner' 
+            : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50 hover:shadow-md'
         }`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -51,23 +51,32 @@ const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => 
           className="hidden"
         />
         
-        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+        {resumeFile ? (
+          <FileText className="mx-auto h-16 w-16 text-green-500 mb-4" />
+        ) : (
+          <Upload className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+        )}
         
         {resumeFile ? (
-          <div>
-            <p className="text-green-600 font-medium">✓ File Selected</p>
-            <p className="text-sm text-gray-600 mt-1">{resumeFile.name}</p>
-            <p className="text-xs text-gray-500 mt-2">
+          <div className="space-y-3">
+            <p className="text-green-600 font-semibold text-xl">✓ Resume Uploaded!</p>
+            <p className="text-sm text-gray-600 bg-white py-2 px-4 rounded-full inline-block border">
+              {resumeFile.name}
+            </p>
+            <p className="text-xs text-gray-500 mt-4">
               Click to choose a different file
             </p>
           </div>
         ) : (
-          <div>
-            <p className="text-gray-600">
-              Drag & drop your resume here, or click to browse
+          <div className="space-y-3">
+            <p className="text-gray-600 text-xl font-semibold">
+              Drag & drop your resume here
             </p>
-            <p className="text-xs text-gray-500 mt-1">
-              PDF files only (max 5MB)
+            <p className="text-gray-500 text-lg">
+              or click to browse files
+            </p>
+            <p className="text-sm text-gray-400 mt-4">
+              Supports PDF files only (max 5MB)
             </p>
           </div>
         )}
