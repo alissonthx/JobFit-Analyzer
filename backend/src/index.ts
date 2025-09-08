@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import routes from './routes'; // Import the main router
 
 // Load environment variables
 dotenv.config();
@@ -12,27 +13,20 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'JobFit Analyzer API is running!',
-    timestamp: new Date().toISOString()
-  });
-});
+// Use routes
+app.use(routes);
 
-// Basic test endpoint
-app.post('/api/test', (req, res) => {
-  const { message } = req.body;
-  res.json({ 
-    received: true, 
-    message: message || 'No message provided',
-    echo: req.body
+// Global error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message 
   });
 });
 
 // Start server
 app.listen(port, () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
-  console.log(`✅ Health check: http://localhost:${port}/api/health`);
+  console.log(`✅ Health check: http://localhost:${port}/health`);
 });

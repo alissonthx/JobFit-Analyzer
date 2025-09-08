@@ -1,6 +1,5 @@
 import { OpenAI } from 'openai';
 import { Redis } from 'ioredis';
-import { extractTextFromPDF } from '../utils/pdfParser';
 
 export class AnalysisService {
   private openai: OpenAI;
