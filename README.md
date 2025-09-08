@@ -1,8 +1,10 @@
 # JobFit-Analyzer
 
+<img src="frontend/public/page.png">
+
 How to Run the Project
 
-    Clone and setup:
+Clone and setup:
 
 ```bash
 git clone https://github.com/alissonthx/JobFit-Analyzer.git
@@ -16,15 +18,22 @@ cd jobfit-analyzer
 npm install
 ```
 
-    Set up environment variables
+Set up environment variables on .env file, example:
 
-    Start with Docker:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+PORT=3001
+REDIS_URL=redis://localhost:6379
+DATABASE_URL=postgresql://postgres:password@localhost:5432/jobfit
+```
+
+Start with Docker:
 
 ```bash
 docker-compose up --build
 ```
 
-    Or run locally:
+Or run locally:
 
 # Backend
 
