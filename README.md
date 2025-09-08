@@ -1,5 +1,7 @@
 # JobFit-Analyzer
 
+<img src="frontend/public/page.png">
+
 How to Run the Project
 
 Clone and setup:
