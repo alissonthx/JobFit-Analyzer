@@ -11,11 +11,11 @@ export class AnalysisService {
   }
 
   async analyzeResume(
-    resumeText: string, 
+    resumeText: string,
     jobDescription: string
   ): Promise<AnalysisResult> {
     const cacheKey = `analysis:${this.generateHash(resumeText + jobDescription)}`;
-    
+
     // Check Redis cache first
     const cachedResult = await this.redis.get(cacheKey);
     if (cachedResult) {
@@ -50,10 +50,10 @@ export class AnalysisService {
     });
 
     const result = JSON.parse(response.choices[0]?.message?.content || '{}');
-    
+
     // Cache result in Redis for 24 hours
     await this.redis.setex(cacheKey, 86400, JSON.stringify(result));
-    
+
     return result;
   }
 

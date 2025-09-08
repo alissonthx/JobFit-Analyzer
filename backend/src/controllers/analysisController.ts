@@ -46,7 +46,7 @@ export const analyzeResumeDirect = async (req: Request, res: Response) => {
     }
 
     // File buffer approach
-    const analysis = await analysisService.processPDFAndAnalyze(resumeFile.buffer, jobDescription);
+    const analysis = await processPDFAndAnalyze(resumeFile.buffer, jobDescription);
 
     res.json({
       success: true,
@@ -63,3 +63,7 @@ export const analyzeResumeDirect = async (req: Request, res: Response) => {
     });
   }
 };
+
+function processPDFAndAnalyze(buffer: Buffer<ArrayBufferLike>, jobDescription: any) {
+  throw new Error('Function not implemented.');
+}

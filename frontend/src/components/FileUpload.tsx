@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, FileText, CircleQuestionMark } from 'lucide-react';
+import React from 'react';
+import { Upload, FileText } from 'lucide-react';
 import PopoverHelp from './ui/PopoverHelp';
 
 interface FileUploadProps {
@@ -8,7 +8,6 @@ interface FileUploadProps {
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ resumeFile, onFileChange }) => {
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;

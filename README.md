@@ -18,7 +18,7 @@ cd jobfit-analyzer
 npm install
 ```
 
-Set up environment variables on .env file, example:
+Set up environment variables on .env file, remembers inside Docker containers, localhost refers to the container itself, not the Redis or PostgreSQL services, example:
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
@@ -30,7 +30,7 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/jobfit
 Start with Docker:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Or run locally:
@@ -68,7 +68,7 @@ cd frontend && npm run dev
 
 - Redis for caching
 
-- PostgreSQL for data storage (optional)
+- PostgreSQL for data storage
 
 - Jest for testing
 
