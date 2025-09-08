@@ -1,109 +1,130 @@
 import React, { useState } from 'react';
-import { analyzeResume } from '../services/api';
+import { useApi } from '../hooks/useApi';
+import { apiService } from '../services/api';
+import type { AnalysisResult } from '../types/api';
+import AnalysisResults from './AnalysisResults';
+import FileUpload from './FileUpload';
+import JobDescriptionInput from './JobDescriptionInput';
+import { Transition } from '@headlessui/react';
 
 const ResumeAnalyzer: React.FC = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [analysis, setAnalysis] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const { loading, error, callApi, clearError } = useApi();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resumeFile || !jobDescription) return;
+    if (!resumeFile || !jobDescription.trim()) return;
 
-    setLoading(true);
-    try {
-      const result = await analyzeResume(resumeFile, jobDescription);
-      setAnalysis(result);
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Analysis failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    clearError();
+    
+    await callApi(
+      () => apiService.analyzeResume(resumeFile, jobDescription),
+      (result) => {
+        setAnalysis(result);
+      },
+      (error) => {
+        console.error('Analysis failed:', error);
+        setAnalysis(null);
+      }
+    );
   };
 
+  const handleReset = () => {
+    setResumeFile(null);
+    setJobDescription('');
+    setAnalysis(null);
+    clearError();
+  };
+
+  const isFormValid = resumeFile && jobDescription.trim().length > 0;
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">JobFit Analyzer</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2">Upload Resume (PDF)</label>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
-            className="w-full p-2 border rounded"
-            required
-          />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            JobFit Analyzer
+          </h1>
+          <p className="text-lg text-gray-600">
+            AI-powered resume optimization for your dream job
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2">Job Description</label>
-          <textarea
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            rows={6}
-            className="w-full p-2 border rounded"
-            placeholder="Paste the job description here..."
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-500 text-white px-6 py-2 rounded disabled:opacity-50"
+        <Transition
+          show={!analysis}
+          enter="transition-opacity duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          {loading ? 'Analyzing...' : 'Analyze Fit'}
-        </button>
-      </form>
+          {!analysis ? (
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <FileUpload 
+                resumeFile={resumeFile}
+                onFileChange={setResumeFile}
+              />
+              
+              <JobDescriptionInput
+                value={jobDescription}
+                onChange={setJobDescription}
+              />
 
-      {analysis && (
-        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Analysis Results</h2>
-          
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold">Overall Score: {analysis.score}/100</h3>
-            <div className="w-full bg-gray-200 rounded-full h-4">
-              <div 
-                className="bg-blue-500 h-4 rounded-full" 
-                style={{ width: `${analysis.score}%` }}
-              ></div>
-            </div>
-          </div>
+              {error && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-red-700 font-medium">Error: {error.message}</p>
+                </div>
+              )}
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-green-600">✅ Matching Skills</h4>
-              <ul className="list-disc list-inside">
-                {analysis.matches.map((match: string, index: number) => (
-                  <li key={index}>{match}</li>
-                ))}
-              </ul>
-            </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  disabled={!isFormValid || loading}
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-8 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                      Analyzing...
+                    </span>
+                  ) : (
+                    'Analyze Resume Fit'
+                  )}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="px-6 py-4 border border-gray-300 rounded-xl text-blue-500 hover:text-blue-600 transition-colors duration-200 font-medium"
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+          ) : null}
+        </Transition>
 
-            <div>
-              <h4 className="font-semibold text-red-600">❌ Missing Keywords</h4>
-              <ul className="list-disc list-inside">
-                {analysis.missingKeywords.map((keyword: string, index: number) => (
-                  <li key={index}>{keyword}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <h4 className="font-semibold">💡 Suggestions</h4>
-            <ul className="list-disc list-inside">
-              {analysis.suggestions.map((suggestion: string, index: number) => (
-                <li key={index}>{suggestion}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+        <Transition
+          show={!!analysis}
+          enter="transition-opacity duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          {analysis && (
+            <AnalysisResults 
+              analysis={analysis}
+              jobDescription={jobDescription}
+              onReset={handleReset}
+            />
+          )}
+        </Transition>
+      </div>
     </div>
   );
 };

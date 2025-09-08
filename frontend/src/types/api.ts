@@ -11,6 +11,7 @@ export interface ApiError {
   message: string;
   code?: string;
   status?: number;
+  details?: string;
 }
 
 export interface HealthCheckResponse {
